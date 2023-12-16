@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import AddPlayer from "../components/add-player";
 import TeamInfo from "../components/team-info";
+import GradientText from "../components/gradient-text";
 
 const actions = {
   changeTeamName: "changeTeamName",
@@ -69,10 +70,11 @@ const reducer = (state, action) => {
       }
       return state;
     case actions.deletePlayer:
-      state.players.splice(payload, 1);
+      const playersList = [...state.players];
+      playersList.splice(payload, 1);
       return {
         teamName: state.teamName,
-        players: [...state.players],
+        players: playersList,
       };
     default:
       return state;
@@ -123,35 +125,34 @@ function TeamEnroll() {
     });
   };
 
-  const renderPlayers = players.map((player) => (
-    <AddPlayer
-      key={player.id}
-      {...player}
-      onChange={handlePlayerInfoChange}
-      onDelete={handleDeletePlayer}
-    />
-  ));
+  const playersLength = players.length;
+  const renderPlayers = players.map((player) => {
+    return (
+      <AddPlayer
+        key={player.id}
+        {...player}
+        disabled={playersLength === 1}
+        onChange={handlePlayerInfoChange}
+        onDelete={handleDeletePlayer}
+      />
+    );
+  });
 
-  const handleSubmit = () => {
-    setShowInfo(true);
+  const toggleShowInfo = () => {
+    setShowInfo((prev) => !prev);
   };
 
   return (
-    <Box
-      sx={{
-        mt: "1rem",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
+    <Stack
+      m={4}
+      spacing={4}
+      direction="row"
+      justifyContent={"center"}
+      alignItems={"flex-start"}
+      divider={<Divider orientation="vertical" flexItem />}
     >
-      <Typography variant="h4" gutterBottom>
-        <Typography as="span" variant="h4" className="title-gradient">
-          Enroll your team!
-        </Typography>
-      </Typography>
-      <Box sx={{ width: "450px" }}>
+      <Box width="450px">
+        <GradientText>Enroll your team!</GradientText>
         <TextField
           fullWidth
           label="Team name"
@@ -159,7 +160,7 @@ function TeamEnroll() {
           value={teamName}
           onChange={handleTeamNameChange}
         />
-        <Typography variant="h6" sx={{ fontWeight: 700, mt: "1rem" }}>
+        <Typography variant="h6" fontWeight={700} mt={2}>
           Add Players
         </Typography>
         <Box maxHeight="480px" pr={1} overflow="auto">
@@ -170,23 +171,13 @@ function TeamEnroll() {
           <Button variant="outlined" color="primary" onClick={handleAddPlayer}>
             Add Player
           </Button>
-          <Button variant="outlined" color="success" onClick={handleSubmit}>
-            Submit
+          <Button variant="outlined" color="secondary" onClick={toggleShowInfo}>
+            {showInfo ? "Hide" : "Show"} Info
           </Button>
         </Stack>
       </Box>
-      {showInfo && (
-        <>
-          <Divider
-            sx={{
-              width: "100%",
-              mt: 4,
-            }}
-          />
-          <TeamInfo data={state} />
-        </>
-      )}
-    </Box>
+      {showInfo && <TeamInfo data={state} />}
+    </Stack>
   );
 }
 

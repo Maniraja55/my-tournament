@@ -8,8 +8,9 @@ import {
 } from "@mui/material";
 import PlayerSpecificationType from "./player-specification-type";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { playersSpecTypes } from "./data";
 
-function AddPlayer({ id, name, spec, onChange, onDelete }) {
+function AddPlayer({ id, name, spec, disabled, onChange, onDelete }) {
   const handlePlayerNameChange = (e) => {
     onChange(id, e.target.value, "name");
   };
@@ -34,7 +35,7 @@ function AddPlayer({ id, name, spec, onChange, onDelete }) {
         />
         <IconButton
           aria-label="delete"
-          disabled={id === 0}
+          disabled={disabled}
           color="error"
           onClick={handleDeletePlayer}
         >
@@ -43,10 +44,9 @@ function AddPlayer({ id, name, spec, onChange, onDelete }) {
       </Stack>
       <FormControl>
         <RadioGroup row value={spec} onChange={handlePlayerSpecChange}>
-          <PlayerSpecificationType label="Batter" />
-          <PlayerSpecificationType label="Bowler" />
-          <PlayerSpecificationType label="Allrounder" />
-          <PlayerSpecificationType label="WK" />
+          {playersSpecTypes.map((playerSpec) => (
+            <PlayerSpecificationType key={playerSpec} label={playerSpec} />
+          ))}
         </RadioGroup>
       </FormControl>
     </Box>
