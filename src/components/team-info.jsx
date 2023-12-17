@@ -1,20 +1,14 @@
-import { Typography, Card, CardContent } from "@mui/material";
+import { Card, CardContent } from "@mui/material";
 import GradientText from "./gradient-text";
-import { getCamelCaseWord } from "../utils";
+import PlayerInfo from "./player-info";
 
 export default function TeamInfo({ data: { teamName, players } }) {
   return (
     <Card sx={{ my: 4, minWidth: "450px" }}>
       <CardContent>
         <GradientText>{teamName}</GradientText>
-        {players.map(({ id, name, spec }, index) => (
-          <Typography variant="body1" gutterBottom key={id}>
-            {`${index + 1}.) ${name}`} (
-            <Typography variant="caption" gutterBottom as="span">
-              {getCamelCaseWord(spec)}
-            </Typography>
-            )
-          </Typography>
+        {players.map((player, index) => (
+          <PlayerInfo key={player.id} {...player} index={index} />
         ))}
       </CardContent>
     </Card>
