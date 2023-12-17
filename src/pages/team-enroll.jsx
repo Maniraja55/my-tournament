@@ -13,8 +13,7 @@ import GradientText from "../components/gradient-text";
 
 const actions = {
   changeTeamName: "changeTeamName",
-  changePlayerName: "changePlayerName",
-  changePlayerSpec: "changePlayerSpec",
+  changePlayerInfo: "changePlayerInfo",
   addNewPlayer: "addNewPlayer",
   deletePlayer: "deletePlayer",
 };
@@ -26,13 +25,17 @@ const initialState = {
       id: 0,
       name: "",
       spec: "",
+      subSpec: "",
     },
   ],
 };
 
-const changePlayersInfo = (payload, players, type) => {
-  const { id, value } = payload;
+const changePlayersInfo = (payload, players) => {
+  const { id, value, type } = payload;
   players[id][type] = value;
+  if (type === "spec") {
+    players[id]["subSpec"] = "";
+  }
   return [...players];
 };
 
@@ -44,15 +47,10 @@ const reducer = (state, action) => {
         teamName: payload,
         players: [...state.players],
       };
-    case actions.changePlayerName:
+    case actions.changePlayerInfo:
       return {
         teamName: state.teamName,
-        players: changePlayersInfo(payload, state.players, "name"),
-      };
-    case actions.changePlayerSpec:
-      return {
-        teamName: state.teamName,
-        players: changePlayersInfo(payload, state.players, "spec"),
+        players: changePlayersInfo(payload, state.players),
       };
     case actions.addNewPlayer:
       if (state.players.length < 11) {
@@ -63,6 +61,7 @@ const reducer = (state, action) => {
             {
               name: "",
               spec: "",
+              subSpec: "",
               id: state.players.length,
             },
           ],
@@ -103,11 +102,11 @@ function TeamEnroll() {
 
   const handlePlayerInfoChange = (id, value, type) => {
     dispatch({
-      type:
-        type === "name" ? actions.changePlayerName : actions.changePlayerSpec,
+      type: actions.changePlayerInfo,
       payload: {
         id,
         value,
+        type,
       },
     });
   };

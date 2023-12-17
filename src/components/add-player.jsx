@@ -10,13 +10,13 @@ import PlayerSpecificationType from "./player-specification-type";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { playersSpecTypes } from "./data";
 
-function AddPlayer({ id, name, spec, disabled, onChange, onDelete }) {
+function AddPlayer({ id, name, spec, subSpec, disabled, onChange, onDelete }) {
   const handlePlayerNameChange = (e) => {
     onChange(id, e.target.value, "name");
   };
 
-  const handlePlayerSpecChange = (e, value) => {
-    onChange(id, value, "spec");
+  const handlePlayerSpecChange = (value, isSub = false) => {
+    onChange(id, value, isSub ? "subSpec" : "spec");
   };
 
   const handleDeletePlayer = () => {
@@ -43,11 +43,26 @@ function AddPlayer({ id, name, spec, disabled, onChange, onDelete }) {
         </IconButton>
       </Stack>
       <FormControl>
-        <RadioGroup row value={spec} onChange={handlePlayerSpecChange}>
-          {playersSpecTypes.map((playerSpec) => (
+        <RadioGroup
+          row
+          value={spec}
+          onChange={(e, val) => handlePlayerSpecChange(val)}
+        >
+          {playersSpecTypes.spec.map((playerSpec) => (
             <PlayerSpecificationType key={playerSpec} label={playerSpec} />
           ))}
         </RadioGroup>
+        {spec && (
+          <RadioGroup
+            row
+            value={subSpec}
+            onChange={(e, val) => handlePlayerSpecChange(val, true)}
+          >
+            {playersSpecTypes[spec]?.map((playerSpec) => (
+              <PlayerSpecificationType key={playerSpec} label={playerSpec} />
+            ))}
+          </RadioGroup>
+        )}
       </FormControl>
     </Box>
   );
